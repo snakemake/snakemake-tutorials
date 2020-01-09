@@ -36,7 +36,7 @@ If you might want to create this programatically in the future, click there.
 After you create the instance, it will take a brief time to spin up, and when it's ready,
 a small green dot will appear on the left side.
 
-![img/instance-ready.png](img/instance-ready.png)
+<!--![img/instance-ready.png](img/instance-ready.png)-->
 
 You can then click on the "SSH" dropdown on the right side, and I like to copy
 paste the command for shelling into the instance from my command line (view gcloud commnd).
@@ -154,7 +154,3 @@ snakemake  --google-lifesciences --verbose  -s Snakefilev13 --default-remote-pro
 ```
 
 **under development**
-
-
-
-
