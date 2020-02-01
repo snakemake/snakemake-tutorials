@@ -6,7 +6,7 @@ working on documentation for different workflows using snakemake.
 ## Google Cloud
 
  - [GoogleMAGs](GoogleMAGs)
- - [kim-wxs-varlociraptor](kim-wxs-varlociraptor)
+ - [dna-seq-varlociraptor](dna-seq-varlociraptor)
 
 These markdown tutorials will either be moved to official documentation, or 
 rendered from GitHub pages here.
