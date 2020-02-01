@@ -1,0 +1,115 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 9223372036854775807
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	build_oncoprint_table
+	1	plot_oncoprint
+	3
+
+[Sat Feb  1 12:30:27 2020]
+rule build_oncoprint_table:
+    output: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.tsv
+    jobid: 2
+    wildcards: event=present
+
+Get status with:
+gcloud config set project snakemake-testing
+gcloud beta lifesciences operations describe 1264563821085236371
+gcloud beta lifesciences operations list
+Worker released
+Stopped running "snakejob-build_oncoprint_table-2": 100% 31.7M=0s
+
+2020-02-01 19:32:20 (31.7 MB/s) - ‘/download.py’ saved [1246/1246]
+
+Building DAG of jobs...
+Creating conda environment workflow/envs/oncoprinttable.yaml...
+Downloading and installing remote packages.
+Environment for workflow/envs/oncoprinttable.yaml created (location: .snakemake/conda/c6778805)
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	build_oncoprint_table
+	1
+
+[Sat Feb  1 19:33:48 2020]
+rule build_oncoprint_table:
+    output: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.tsv
+    jobid: 0
+    wildcards: event=present
+
+Activating conda environment: /workdir/.snakemake/conda/c6778805
+Uploading to remote: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.tsv
+Finished upload.
+[Sat Feb  1 19:33:51 2020]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /workdir/.snakemake/log/2020-02-01T193224.972289.snakemake.log
+Started running "snakejob-build_oncoprint_table-2"
+Stopped pulling "snakemake/snakemake:v5.10.0"
+Started pulling "snakemake/snakemake:v5.10.0"
+Worker "google-pipelines-worker-904ad6449325613c78306e1e0e4929eb" assigned in "us-west1-c"
+[Sat Feb  1 12:33:59 2020]
+Finished job 2.
+1 of 3 steps (33%) done
+
+[Sat Feb  1 12:33:59 2020]
+rule plot_oncoprint:
+    input: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.tsv
+    output: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.pdf
+    jobid: 1
+    wildcards: event=present
+
+Get status with:
+gcloud config set project snakemake-testing
+gcloud beta lifesciences operations describe 13321012366542853386
+gcloud beta lifesciences operations list
+Worker released
+Stopped running "snakejob-plot_oncoprint-1": ing/dna-seq-varlociraptor/plots/oncoprint/present.pdf
+    jobid: 0
+    wildcards: event=present
+
+Downloading from remote: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.tsv
+Finished download.
+Activating conda environment: /workdir/.snakemake/conda/f859ed29
+Loading required package: grid
+========================================
+ComplexHeatmap version 2.2.0
+Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+Github page: https://github.com/jokergoo/ComplexHeatmap
+Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+
+If you use it in published research, please cite:
+Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+  genomic data. Bioinformatics 2016.
+========================================
+
+Uploading to remote: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.pdf
+Finished upload.
+[Sat Feb  1 19:38:06 2020]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /workdir/.snakemake/log/2020-02-01T193600.692552.snakemake.log
+Started running "snakejob-plot_oncoprint-1"
+Stopped pulling "snakemake/snakemake:v5.10.0"
+Started pulling "snakemake/snakemake:v5.10.0"
+Worker "google-pipelines-worker-77c3e460b711dc13d5d7a6910e0ef2d5" assigned in "us-west1-c"
+[Sat Feb  1 12:38:11 2020]
+Finished job 1.
+2 of 3 steps (67%) done
+
+[Sat Feb  1 12:38:11 2020]
+localrule all:
+    input: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.pdf
+    jobid: 0
+
+Downloading from remote: snakemake-testing/dna-seq-varlociraptor/plots/oncoprint/present.pdf
+Finished download.
+[Sat Feb  1 12:38:11 2020]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: /home/vanessa/Documents/Dropbox/Code/Python/snakemake/snakemake-tutorials/dna-seq-varlociraptor/dna-seq-varlociraptor/.snakemake/log/2020-02-01T123026.287730.snakemake.log

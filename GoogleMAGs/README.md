@@ -4,6 +4,12 @@ This tutorial is intended to run on Google Cloud, specifically by starting
 a Google Compute Engine Instance, shelling in, installing snakemake,
 and running a pipeline. Full instructions are included here.
 
+**Important** read/write access is currently required for the bucket hn-snakemake/pig5,
+along with Google Life Sciences Project permissions added for your project to the
+project with this bucket to run this pipeline. Both the credentials that you
+generate along with your compute engine credential will need GET access to
+the bucket mentioned above. In testing, we had to use admin access for it 
+to fully work.
 
 ## 1. Create an Instance
 
@@ -54,24 +60,29 @@ First, here is for snakemake.
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y git gcc python3-dev
+sudo apt-get install -y git gcc
 ```
 
-Ensure that python 3 is installed
+Let's install anaconda so we can test pipelines with conda.
 
 ```bash
-$ which python3
-/usr/bin/python3
-$ python3 --version
-Python 3.6.9
+$ wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
+$ chmod +x Anaconda3-2019.10-Linux-x86_64.sh 
+$ ./Anaconda3-2019.10-Linux-x86_64.sh -b -p $HOME/anaconda3
 ```
 
-Let's also install pip.
+Add to our path (edit in your bash profile to make permanent, if desired).
 
 ```bash
-wget https://bootstrap.pypa.io/get-pip.py
-chmod +x get-pip.py
-sudo python3 get-pip.py
+export PATH=$HOME/anaconda3/bin:$PATH
+which python
+/home/vanessa/anaconda3/bin/python
+
+python --version
+Python 3.7.4
+
+which pip
+/home/vanessa/anaconda3/bin/pip
 ```
 
 ### Snakemake
@@ -82,20 +93,14 @@ testing instance I'm going to install snakemake using the system python.
 ```bash
 git clone -b add/google-cloud-pipelines https://github.com/vsoch/snakemake
 cd snakemake
-sudo python3 setup.py install
-```
-
-You could also use pip if you prefer!
-
-```bash
-sudo -H pip install .
+pip install .
 ```
 
 And ensure it installed successfully and snakemake is on your path.
 
 ```bash
 $ which snakemake
-/usr/local/bin/snakemake
+/home/vanessa/anaconda3/bin/snakemake
 ```
 
 ### Google API Python Clients
@@ -105,9 +110,9 @@ Also, these aren't provided by default with Snakemake (there are many users that
 to use Snakemake in a context outside of Google). However, we need them.
 
 ```bash
-sudo -H pip3 install --upgrade google-api-python-client
-sudo -H pip3 install --upgrade google-cloud-storage
-sudo -H pip3 install oauth2client
+pip install --upgrade google-api-python-client
+pip install --upgrade google-cloud-storage
+pip install oauth2client
 ```
 
 If you haven't yet, create a Google Storage Bucket in the interface.
@@ -139,14 +144,117 @@ Then you can export your credentials to the environment.
 export GOOGLE_APPLICATION_CREDENTIALS="/home/[username]/credentials.json"
 ```
 
+Note that I've also tested the above instead installing `python3-dev` and using [get-pip.py](https://bootstrap.pypa.io/get-pip.py)
+to install pip. If you install to system Python you'd need to use sudo, otherwise you can use virtualenv.
+
 ## 4. Run Snakemake
 
 Now let's test running Snakemake! Here we are in the root folder of the GoogleMAGs repository.
 The snakefile we are targeting is `Snakefilev14` and we are going to choose the same region that our
-instance is in.
+instance is in. 
+
+### Running from within Python
+
+Although this is more complicated, I tested it first since I anticipated the command line would lead to troubles.
+Note that this is being run after cd into the GoogleMAGs directory.
+
+```python
+from snakemake import snakemake
+import os
+workdir = os.getcwd()
+```
+
+Add the present working directory to the Python path:
+
+```python
+os.environ['PYTHONPATH'] = os.getcwd()
+```
+
+We want to provide the full path to the snakefile
+
+```python
+snakefile = 'Snakefilev14'
+snakefile = os.path.abspath(snakefile)
+```
+
+And now create a temporary directory for working:
+
+```python
+import tempfile
+tmpdir = next(tempfile._get_candidate_names()) 
+tmpdir = os.path.join(tempfile.gettempdir(), "snakemake-%s" % tmpdir) 
+os.mkdir(tmpdir) 
+```
+
+Copy all our files there.
+
+```python
+import shutil
+
+def copy(src, dst): 
+    if os.path.isdir(src): 
+        shutil.copytree(src, os.path.join(dst, os.path.basename(src))) 
+    else: 
+        shutil.copy(src, dst) 
+
+path = os.getcwd()
+for f in os.listdir(path): 
+    print(f) 
+    copy(os.path.join(path, f), tmpdir) 
+
+Snakefilev6
+Dockerfile
+Snakefile
+Snakefilev11
+cluster.json
+runs
+Snakefilev8
+envs
+environment.yaml
+Snakefilev7
+create_local_text.sh
+Snakefilev10
+fileofaccessions.txt
+.git
+Snakefilev13
+scripts
+Snakefilev14
+Snakefilev9
+.snakemake
+LICENSE
+README.md
+Snakefilev12
+```
+
+Let's get ready to run! These are the same parameters used in testing.
+
+```python
+cores = 3
+config={}                                                                                                                        
+verbose=True                                                                                                                   
+success = snakemake( 
+    snakefile,
+    cores=cores, 
+    workdir=tmpdir, 
+    stats="stats.txt", 
+    config=config, 
+    use_conda=True,
+    google_lifesciences_regions=["us-west1"],
+    default_remote_prefix="hn-snakemake/pig5",
+    google_lifesciences=True,
+    google_lifesciences_cache=True,
+    verbose=True) 
+```
+
+And then the pipeline will run and print verbose output to the screen.
+
+### Running from the Command Line
+
+Now that we've seen a test running from within Python, let's review the more likely 
+use case (running from the command line).
 
 ```bash
-snakemake  --google-lifesciences --verbose -s Snakefilev14 -j 400 --default-remote-prefix snakemake-testing/pig5 --use-conda --google-lifesciences-keep-cache --google-lifesciences-region us-west1-b
+snakemake  --google-lifesciences --verbose -s Snakefilev14 -j 400 --default-remote-prefix hn-snakemake/pig5 --use-conda --google-lifesciences-keep-cache --google-lifesciences-region us-west1-b
 ```
 
 ```bash
