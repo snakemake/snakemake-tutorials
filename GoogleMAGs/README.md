@@ -93,7 +93,20 @@ testing instance I'm going to install snakemake using the system python.
 ```bash
 git clone -b add/google-cloud-pipelines https://github.com/vsoch/snakemake
 cd snakemake
-pip install .
+```
+
+To ensure that we fetch tags (versions) from the upstream, add it as a remote,
+and fetch those tags:
+
+```bash
+git remote add upstream https://github.com/snakemake/snakemake.git
+git fetch upstream
+```
+
+And then install with pip. You should see a version 5.10.0 or later.
+
+```bash
+pip install -e .
 ```
 
 And ensure it installed successfully and snakemake is on your path.
@@ -170,11 +183,10 @@ Add the present working directory to the Python path:
 os.environ['PYTHONPATH'] = os.getcwd()
 ```
 
-We want to provide the full path to the snakefile
+We want to provide the path to the snakefile:
 
 ```python
 snakefile = 'Snakefilev14'
-snakefile = os.path.abspath(snakefile)
 ```
 
 And now create a temporary directory for working:
@@ -254,11 +266,14 @@ Now that we've seen a test running from within Python, let's review the more lik
 use case (running from the command line).
 
 ```bash
-snakemake  --google-lifesciences --verbose -s Snakefilev14 -j 400 --default-remote-prefix hn-snakemake/pig5 --use-conda --google-lifesciences-keep-cache --google-lifesciences-region us-west1-b
+snakemake  --google-lifesciences --verbose -s Snakefilev14 --default-remote-prefix hn-snakemake/pig5 --use-conda --google-lifesciences-keep-cache --google-lifesciences-region us-west1
 ```
 
+And here is the same example with 400 jobs:
+
 ```bash
-snakemake  --google-lifesciences --verbose  -s Snakefilev13 --default-remote-provider GS  --default-remote-prefix hn-snakemake/pig5 --use-conda
+snakemake  --google-lifesciences --verbose -s Snakefilev14 -j 400 --default-remote-prefix hn-snakemake/pig5 --use-conda --google-lifesciences-keep-cache --google-lifesciences-region us-west1 --container-image snakemake/snakemake:v5.10.0
 ```
+
 
 **under development**
