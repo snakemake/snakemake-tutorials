@@ -45,10 +45,24 @@ which pip
 Since we are testing the Google Life Sciences integration (which is still
 under development on a branch) we need to install that:
 
+
 ```bash
 git clone -b add/google-cloud-pipelines https://github.com/vsoch/snakemake
 cd snakemake
-pip install .
+```
+
+To ensure that we fetch tags (versions) from the upstream, add it as a remote,
+and fetch those tags:
+
+```bash
+git remote add upstream https://github.com/snakemake/snakemake.git
+git fetch upstream
+```
+
+And then install with pip. You should see a version 5.10.0 or later.
+
+```bash
+pip install -e .
 ```
 
 And ensure it installed successfully and snakemake is on your path.
