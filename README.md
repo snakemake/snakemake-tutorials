@@ -7,6 +7,7 @@ working on documentation for different workflows using snakemake.
 
  - [GoogleMAGs](GoogleMAGs)
  - [dna-seq-varlociraptor](dna-seq-varlociraptor)
+ - [kim-wxs-varlociraptor](kim-wxs-varlociraptor)
 
 These markdown tutorials will either be moved to official documentation, or 
 rendered from GitHub pages here.
