@@ -76,10 +76,19 @@ Google always suggests that you upgrade your python clients, so let's do that.
 Also, these aren't provided by default with Snakemake (there are many users that want
 to use Snakemake in a context outside of Google). However, we need them.
 
+You can either do:
+
+```bash
+pip install snakemake[google-cloud]
+```
+
+or
+
 ```bash
 pip install --upgrade google-api-python-client
 pip install --upgrade google-cloud-storage
 pip install oauth2client
+pip install crc32c
 ```
 
 If you haven't yet, create a Google Storage Bucket in the interface.
